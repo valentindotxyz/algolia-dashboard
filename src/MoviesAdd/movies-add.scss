@@ -1,0 +1,92 @@
+.add-movie-modal {
+  background: #000000ed;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  &-inner {
+    padding: 20px 28px 28px;
+    width: 860px;
+    margin: 64px auto 0;
+    position: relative;
+
+    label {
+      display: block;
+      margin-bottom: -2px;
+    }
+
+    input {
+      border: none;
+      background: none;
+      font-size: 24px;
+      outline: none;
+      color: white;
+      width: 100%;
+    }
+
+    .ais-InstantSearch__root {
+      margin-bottom: 8px;
+    }
+
+    .close-modal {
+      display: block;
+      position: absolute;
+      top: 8px;
+      right: 0;
+      font-size: 32px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 10px 22px;
+
+      &:hover {
+        background: #e6e6e6;
+        color: #333;
+        border-radius: 6px;
+
+      }
+    }
+  }
+
+  .ais-TagsBox {
+    border: none;
+    box-shadow: none;
+
+    &-tags {
+      padding-left: 0;
+      padding-top: 0;
+
+      li {
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+
+    &-tag {
+      margin-bottom: 0;
+      background: #c50000;
+      border-radius: 4px;
+      padding: 6px 8px;
+    }
+
+    &-inputTag {
+      padding-left: 0;
+      width: 300px;
+    }
+  }
+
+  .ais-SuggestedTagsBox {
+    position: absolute;
+    width: 460px;
+    z-index: 2;
+
+    &-tag {
+      background: #000;
+
+      &.hovered, &:hover {
+        background: #c50000;
+      }
+    }
+  }
+}

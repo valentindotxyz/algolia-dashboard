@@ -1,6 +1,9 @@
 import React from 'react';
-import { connectInfiniteHits } from 'react-instantsearch-dom';
+import { connectAutoComplete } from 'react-instantsearch-dom';
 import MoviesGridHit from './MoviesGridHit';
+import MoviesGridSampleHit from './MoviesGridSampleHit';
+
+import './movies-grid.scss';
 
 class MovieHits extends React.Component {
     constructor(props) {
@@ -24,19 +27,23 @@ class MovieHits extends React.Component {
 
     atLeastOneMovieIsHovered() {
         const { hoveredMovies } = this.state;
-        
+
         return Object.keys(hoveredMovies).some(movieObjectID => hoveredMovies[movieObjectID] === true);
     }
 
     render() {
-        const { hits, hasMore, refine } = this.props;
+        const { hits, currentRefinement, refine, toggleModal } = this.props;
 
         return (
             <div className={`row movies ${this.atLeastOneMovieIsHovered() ? 'hovered' : 'not-hovered'}`}>
+                {(currentRefinement === '' || !hits.length) &&
+                    <MoviesGridSampleHit toggleModal={toggleModal} />
+                }
+
                 {hits.map(hit => <MoviesGridHit key={hit.objectID} hit={hit} onHoverMovie={this.onHoverMovie} />)}
             </div>
         )
     }
 }
 
-export default connectInfiniteHits(MovieHits);
+export default connectAutoComplete(MovieHits);

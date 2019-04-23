@@ -30,7 +30,7 @@ class MoviesGridHit extends React.Component {
         const { isHovered } = this.state;
 
         return (
-            <div key={hit.objectID} className={`col-sm-2 movie ${isHovered ? 'hovered' : 'not-hovered'}`}
+            <div className={`col-sm-2 movie ${isHovered ? 'hovered' : 'not-hovered'}`}
                  onMouseOver={() => this.hover(true)}
                  onMouseOut={() => this.hover(false)}>
                 <picture className="movie-picture">
