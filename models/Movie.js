@@ -33,11 +33,11 @@ const Movie = {
                 , [id], (err, res, fields) => {
 
                     if (err) {
-                        reject(err);
+                        return reject(err);
                     }
 
                     if (!res.length) {
-                        reject('Movie not found,');
+                        return reject('Movie not found,');
                     }
 
                     let movie = res[0];
