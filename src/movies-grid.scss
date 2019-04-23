@@ -1,0 +1,79 @@
+.movies {
+  &.hovered {
+    .movie.not-hovered {
+      transition: opacity .2s;
+      opacity: 0.3;
+    }
+  }
+}
+
+.movie {
+  margin-bottom: 42px;
+  transition: transform .2s;
+
+  &-picture {
+    position: relative;
+    display: block;
+    width: 100%;
+    box-shadow: 0 14px 30px -5px #000;
+    border-radius: 4px;
+
+    img {
+      width: 100%;
+      border-radius: 4px;
+    }
+  }
+
+  &-content {
+    margin-top: 18px;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  &-title {
+    font-weight: 800;
+  }
+
+  &-genre {
+    font-weight: 300;
+    font-size: 13px;
+  }
+
+  &-description {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 12px;
+    padding: 8px;
+    background: #000000b8;
+    height: 100%;
+    border-radius: 4px;
+    display: none;
+    overflow-y: scroll;
+  }
+
+  &-rating {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: #ffd400;
+    font-size: 11px;
+    padding: 0 12px;
+    color: #000;
+    line-height: 1.7;
+    font-weight: bold;
+    border-radius: 4px;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+  }
+
+  .ais-Highlight-highlighted {
+    font-style: normal;
+    text-decoration: underline;
+  }
+}
