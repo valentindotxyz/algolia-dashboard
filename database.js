@@ -1,11 +1,10 @@
-const args = require('minimist')(process.argv.slice(2));
 const mysql = require('mysql');
 
 const mysqlDb = mysql.createConnection({
-    host: args.db_host,
-    user: args.db_user,
-    password: args.db_password,
-    database: args.db_database
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'root',
+    database: process.env.DB_DATABASE || 'dashboard_assignment'
 });
 
 mysqlDb.connect(err => {
