@@ -22,14 +22,22 @@ app.get('/api/1/movies/:id', function (req, res) {
         })
 });
 
-// Update partially a movie…
+// Create a movie…
 app.post('/api/1/movies', function (req, res) {
-    res.json(req.body);
+    const { title, actors, genres, year, thumbnail, rating } = req.body;
+
+    Movie
+        .create(title, [], actors, genres, year, thumbnail, "#FFFFFF", rating, 9.99999)
+        .then(movie => res.json(movie))
+        .catch(err => res.status(500).json({ status: 'error', error: err }))
 });
 
 // Delete a movie…
 app.delete('/api/1/movies/:id', function (req, res) {
-    res.send('Got a POST request')
+    Movie
+        .deleteById(req.params.id)
+        .then(res.json(200))
+        .catch(err => res.status(500).json({ status: 'error', error: err }));
 });
 
 // Check if the API is up and running…

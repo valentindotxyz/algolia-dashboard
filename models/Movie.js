@@ -1,7 +1,10 @@
 const mysqlDb = require('../database');
+const algoliaClient = require('../algolia');
 
 const Actor = require('./Actor');
 const Genre = require('./Genre');
+
+const moviesIndex = algoliaClient.initIndex('movies');
 
 const Movie = {
     getAll: () => {
@@ -21,7 +24,7 @@ const Movie = {
             mysqlDb.query(
                 'SELECT m.*, ' +
                 'GROUP_CONCAT(DISTINCT mat.title) alternative_titles, ' +
-                'GROUP_CONCAT(DISTINCT g.name) genres, ' +
+                'GROUP_CONCAT(DISTINCT g.name) genre, ' +
                 'GROUP_CONCAT(DISTINCT a.name) actors ' +
                 'FROM movies m ' +
                 'LEFT OUTER JOIN movies_alternative_titles mat ON m.id = mat.movie_id ' +
@@ -50,48 +53,56 @@ const Movie = {
                 })
         })
     },
-    create: (objectID, title, alternativeTitles, actors, genres, year, image, color, rating, score) => {
-        mysqlDb.query('INSERT INTO movies SET ?', { id: objectID, title, year, image, color, rating, score }, async (err, res, fields) => {
-            if (err) {
-                return console.error({ code: 'ERROR_ADD', error: err });
-            }
-
-            const movieId = res.insertId;
-
-            // Add alternative titles to original one…
-            if (Array.isArray(alternativeTitles) && alternativeTitles.length > 0) {
-                for (const alternativeTitle of alternativeTitles) {
-                    await Movie.addAlternativeTitle(movieId, alternativeTitle)
+    create: (title, alternativeTitles, actors, genres, year, image, color, rating, score) => {
+        return new Promise((resolve, reject) => {
+            mysqlDb.query('INSERT INTO movies SET ?', { title, year, image, color, rating, score }, async (err, res, fields) => {
+                if (err) {
+                    return console.error({ code: 'ERROR_ADD', error: err });
                 }
-            }
 
-            // Add actors…
-            if (Array.isArray(actors) && actors.length > 0) {
-                for (const actor of actors) {
-                    const actorObj = await Actor.create(actor);
-                    await Movie.addActorToMovie(movieId, actorObj.id);
+                const movieId = res.insertId;
+
+                // Add alternative titles to original one…
+                if (Array.isArray(alternativeTitles) && alternativeTitles.length > 0) {
+                    for (const alternativeTitle of alternativeTitles) {
+                        await Movie.addAlternativeTitle(movieId, alternativeTitle)
+                    }
                 }
-            }
 
-            // Add genres…
-            if (Array.isArray(genres) && genres.length > 0) {
-                for (const genre of genres) {
-                    const genreObj = await Genre.create(genre);
-                    await Movie.addGenreToMovie(movieId, genreObj.id);
+                // Add actors…
+                if (Array.isArray(actors) && actors.length > 0) {
+                    for (const actor of actors) {
+                        const actorObj = await Actor.create(actor);
+                        await Movie.addActorToMovie(movieId, actorObj.id);
+                    }
                 }
-            }
 
-            console.log('Movie added', movieId);
-            return movieId;
+                // Add genres…
+                if (Array.isArray(genres) && genres.length > 0) {
+                    for (const genre of genres) {
+                        const genreObj = await Genre.create(genre);
+                        await Movie.addGenreToMovie(movieId, genreObj.id);
+                    }
+                }
+
+                Movie.findById(movieId).then(movie =>
+                    // Indexing movie in Algolia…
+                    moviesIndex.addObject(movie, err => {
+                        if (err) {
+                            reject(err);
+                        }
+
+                        resolve(movie);
+                    })
+                );
+            });
         });
     },
     addAlternativeTitle: (movieId, alternativeTitle) => {
-        console.log('Adding alternative title', alternativeTitle, 'to Movie', movieId);
 
         return new Promise((resolve, reject) => {
             mysqlDb.query('INSERT INTO movies_alternative_titles SET ?', { movie_id: movieId, title: alternativeTitle }, (err, res) => {
                 if (err) {
-                    console.log('Could not add alternative title', err);
                     reject(err);
                 }
 
@@ -100,33 +111,44 @@ const Movie = {
         });
     },
     addActorToMovie: (movieId, actorId) => {
-        console.log('Adding Actor', actorId, 'to Movie', movieId);
-
         return new Promise((resolve, reject) => {
             mysqlDb.query('INSERT INTO movies_actors SET ?', { movie_id: movieId, actor_id: actorId }, (err, res) => {
                 if (err) {
-                    console.log('Could not add Actor to Movie.', err);
                     reject(err);
                 }
 
-                console.log('Actor', actorId, 'added to Movie', movieId);
                 resolve(res.insertId);
             });
         });
     },
     addGenreToMovie: (movieId, genreId) => {
         return new Promise((resolve, reject) => {
-            console.log('Adding Genre', genreId, 'to Movie', movieId);
-
             mysqlDb.query('INSERT INTO movies_genres SET ?', { movie_id: movieId, genre_id: genreId }, (err, res) => {
                 if (err) {
-                    console.log('Could not add Genre to Movie.', err);
                     reject(err);
                 }
 
-                console.log('Genre', genreId, 'added to Movie', movieId);
                 resolve(res.insertId);
             });
+        });
+    },
+    deleteById: id => {
+        return new Promise((resolve, reject) => {
+            // Deleting movie in database…
+            mysqlDb.query('DELETE FROM movies WHERE id = ?', ['id'], (err, res, fields) => {
+                if (err) {
+                    reject(err);
+                }
+
+                // Removing movie from Algolia…
+                moviesIndex.deleteObject(id, (err, content) => {
+                    if (err) {
+                        reject(err);
+                    }
+
+                    resolve();
+                });
+            })
         });
     }
 };

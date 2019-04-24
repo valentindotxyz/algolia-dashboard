@@ -1,5 +1,5 @@
 import React from 'react';
-import { connectAutoComplete } from 'react-instantsearch-dom';
+import { connectAutoComplete, Pagination } from 'react-instantsearch-dom';
 import MoviesGridHit from './MoviesGridHit';
 import MoviesGridSampleHit from './MoviesGridSampleHit';
 
@@ -41,6 +41,8 @@ class MovieHits extends React.Component {
                 }
 
                 {hits.map(hit => <MoviesGridHit key={hit.objectID} hit={hit} onHoverMovie={this.onHoverMovie} />)}
+
+                <Pagination />
             </div>
         )
     }
