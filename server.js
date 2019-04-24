@@ -1,8 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const path = require('path');
+const bodyParser = require('body-parser');
 
 const app = express();
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'build')));
 
 const Movie = require('./models/Movie');
@@ -11,17 +12,19 @@ const Movie = require('./models/Movie');
 app.get('/api/1/movies/:id', function (req, res) {
     Movie
         .findById(req.params.id)
-        .then(movie => res.json(movie));
+        .then(movie => res.json(movie))
+        .catch(err => {
+            if (err.code === 'NOT_FOUND') {
+                res.status(404).json({ status: 'error', error: 'not_found' });
+            }
+
+            res.status(500).json({ status: 'error', error: null });
+        })
 });
 
 // Update partially a movie…
 app.post('/api/1/movies', function (req, res) {
-    res.send('Got a POST request')
-});
-
-// Update a movie (by replacing all attributes)…
-app.post('/api/1/movies/:id', function (req, res) {
-    res.send('Got a POST request')
+    res.json(req.body);
 });
 
 // Delete a movie…

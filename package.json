@@ -4,8 +4,11 @@
   "private": true,
   "dependencies": {
     "algoliasearch": "^3.32.1",
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "instantsearch-tagsbox-react": "^1.2.1",
+    "method-override": "^3.0.0",
     "mysql": "^2.17.1",
     "node-sass": "^4.11.0",
     "react": "^16.8.6",
@@ -15,6 +18,7 @@
     "react-scripts": "2.1.8"
   },
   "scripts": {
+    "launch": "react-scripts start",
     "start": "react-scripts build && node server.js",
     "build": "react-scripts build",
     "test": "react-scripts test",

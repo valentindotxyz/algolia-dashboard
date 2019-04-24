@@ -17,6 +17,7 @@ const Movie = {
     },
     findById: id => {
         return new Promise((resolve, reject) => {
+            // Get the Movie and its associated alternative titles, actors and genres…
             mysqlDb.query(
                 'SELECT m.*, ' +
                 'GROUP_CONCAT(DISTINCT mat.title) alternative_titles, ' +
@@ -31,15 +32,15 @@ const Movie = {
                 'WHERE m.id = ? ' +
                 'GROUP BY m.id LIMIT 1'
                 , [id], (err, res, fields) => {
-
                     if (err) {
                         return reject(err);
                     }
 
                     if (!res.length) {
-                        return reject('Movie not found,');
+                        return reject({ code: 'NOT_FOUND', error: err });
                     }
 
+                    // MySQL data is returned separated by ',' we transform them to an array of string…
                     let movie = res[0];
                     movie.alternative_titles = movie.alternative_titles.split(',');
                     movie.actors = movie.actors.split(',');
@@ -52,8 +53,7 @@ const Movie = {
     create: (objectID, title, alternativeTitles, actors, genres, year, image, color, rating, score) => {
         mysqlDb.query('INSERT INTO movies SET ?', { id: objectID, title, year, image, color, rating, score }, async (err, res, fields) => {
             if (err) {
-                console.log('err', err);
-                reject(err);
+                return console.error({ code: 'ERROR_ADD', error: err });
             }
 
             const movieId = res.insertId;
@@ -67,11 +67,9 @@ const Movie = {
 
             // Add actors…
             if (Array.isArray(actors) && actors.length > 0) {
-                for (const actorFacetRaw of actors) {
-                    const actorFacet = actorFacetRaw.split('|');
-
-                    const actor = await Actor.create(actorFacet[1], actorFacet[0]);
-                    await Movie.addActorToMovie(movieId, actor.id);
+                for (const actor of actors) {
+                    const actorObj = await Actor.create(actor);
+                    await Movie.addActorToMovie(movieId, actorObj.id);
                 }
             }
 
@@ -84,6 +82,7 @@ const Movie = {
             }
 
             console.log('Movie added', movieId);
+            return movieId;
         });
     },
     addAlternativeTitle: (movieId, alternativeTitle) => {

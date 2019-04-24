@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 
-// Create a MySQL connection available for all the application…
+// Create a MySQL connection available for all the application; either using environment variables or hard-coded ones…
 const mysqlDb = mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',

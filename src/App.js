@@ -46,7 +46,6 @@ class App extends React.Component {
             </InstantSearch>
         )
     }
-
 }
 
 export default App;

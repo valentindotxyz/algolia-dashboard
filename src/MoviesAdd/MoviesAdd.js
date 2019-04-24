@@ -1,6 +1,7 @@
 import React from 'react';
 import { InstantSearch } from 'react-instantsearch-dom';
 import TagsBox from 'instantsearch-tagsbox-react';
+import axios from 'axios';
 
 import { searchClient } from "../App";
 import './movies-add.scss';
@@ -32,7 +33,13 @@ class MoviesAdd extends React.Component {
     };
 
     addMovie = () => {
-      console.log('addMovie', this.state);
+      let requestBody = { ...this.state };
+      requestBody.actors = requestBody.actors.map(actor => actor.name);
+      requestBody.genres = requestBody.genres.map(genre => genre.name);
+
+      axios.post('/api/1/movies', requestBody)
+          .then(res => console.log(res))
+          .catch(err => console.log(err));
     };
 
     render() {

@@ -9,7 +9,7 @@ const Genre = {
                 }
 
                 if (!res.length) {
-                    reject('Genre not found,');
+                    reject('Genre not found.');
                 }
 
                 resolve(res[0]);
@@ -24,7 +24,7 @@ const Genre = {
                 }
 
                 if (!res.length) {
-                    reject('Genre not found,');
+                    reject('Genre not found.');
                 }
 
                 resolve(res[0]);
