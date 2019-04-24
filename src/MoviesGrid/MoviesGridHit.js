@@ -34,7 +34,7 @@ class MoviesGridHit extends React.Component {
     }
 
     render() {
-        const { hit, onDeleteMovie } = this.props;
+        const { hit } = this.props;
         const { isHovered, deleted } = this.state;
 
         // To prevent refreshing the page/results on deletion, we just hide removed movie on a first place…

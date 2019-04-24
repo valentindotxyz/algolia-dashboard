@@ -45,9 +45,9 @@ const Movie = {
 
                     // MySQL data is returned separated by ',' we transform them to an array of string…
                     let movie = res[0];
-                    movie.alternative_titles = movie.alternative_titles.split(',');
-                    movie.actors = movie.actors.split(',');
-                    movie.genres = movie.genres.split(',');
+                    if (movie.alternative_titles !== null) movie.alternative_titles = movie.alternative_titles.split(',');
+                    if (movie.actors !== null) movie.actors = movie.actors.split(',');
+                    if (movie.genre !== null) movie.genre = movie.genre.split(',');
 
                     resolve(movie);
                 })

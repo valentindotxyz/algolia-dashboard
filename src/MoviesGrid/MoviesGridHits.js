@@ -41,7 +41,7 @@ class MovieHits extends React.Component {
     }
 
     render() {
-        const { hits, currentRefinement, refine, toggleModal } = this.props;
+        const { hits, currentRefinement, toggleModal } = this.props;
 
         return (
             <div className={`row movies ${this.atLeastOneMovieIsHovered() ? 'hovered' : 'not-hovered'}`}>

@@ -25,7 +25,8 @@ class MoviesAdd extends React.Component {
                 year: '',
                 rating: ''
             },
-            errors: { }
+            errors: { },
+            submitting: false
         };
 
         this.updateField = this.updateField.bind(this);
@@ -92,9 +93,11 @@ class MoviesAdd extends React.Component {
       requestBody.actors = requestBody.actors.map(actor => actor.name);
       requestBody.genres = requestBody.genres.map(genre => genre.name);
 
-      axios.post('/api/1/movies', requestBody)
-          .then(res => console.log(res))
-          .catch(err => console.log(err));
+      this.setState({ submitting: true }, () => {
+          axios.post('/api/1/movies', requestBody)
+              .then(() => setTimeout(() => window.location.reload(false), 2000))
+              .catch(err => alert('Could not add movie; please retry.'));
+      });
     };
 
     displayError = field => {
@@ -110,7 +113,7 @@ class MoviesAdd extends React.Component {
 
     render() {
         const { toggleModal } = this.props;
-        const { title, thumbnail, year, rating } = this.state;
+        const { title, thumbnail, year, rating, submitting } = this.state;
 
         return (
             <div className="add-movie-modal">
@@ -177,7 +180,9 @@ class MoviesAdd extends React.Component {
                         </p>
                         <br />
                         <p>
-                            <button type="button" onClick={this.validateForm} className="btn btn-danger">Add Movie</button>
+                            <button type="button" onClick={this.validateForm} className="btn btn-danger" disabled={submitting}>
+                                {submitting ? 'Adding movie…' : 'Add Movie'}
+                            </button>
                         </p>
                     </form>
                     <span className="close-modal" onClick={() => toggleModal(false)}>✕</span>
