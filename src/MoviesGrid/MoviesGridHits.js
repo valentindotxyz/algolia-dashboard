@@ -1,5 +1,7 @@
 import React from 'react';
 import { connectAutoComplete, Pagination } from 'react-instantsearch-dom';
+import axios from 'axios';
+
 import MoviesGridHit from './MoviesGridHit';
 import MoviesGridSampleHit from './MoviesGridSampleHit';
 
@@ -14,6 +16,7 @@ class MovieHits extends React.Component {
         };
 
         this.onHoverMovie = this.onHoverMovie.bind(this);
+        this.onDeleteMovie = this.onDeleteMovie.bind(this);
         this.atLeastOneMovieIsHovered = this.atLeastOneMovieIsHovered.bind(this);
     }
 
@@ -31,6 +34,12 @@ class MovieHits extends React.Component {
         return Object.keys(hoveredMovies).some(movieObjectID => hoveredMovies[movieObjectID] === true);
     }
 
+    onDeleteMovie(objectID) {
+        axios
+            .delete(`/api/1/movies/${objectID}`)
+            .catch(() => alert('Something happened while deleting. Please retry.'));
+    }
+
     render() {
         const { hits, currentRefinement, refine, toggleModal } = this.props;
 
@@ -40,7 +49,13 @@ class MovieHits extends React.Component {
                     <MoviesGridSampleHit toggleModal={toggleModal} />
                 }
 
-                {hits.map(hit => <MoviesGridHit key={hit.objectID} hit={hit} onHoverMovie={this.onHoverMovie} />)}
+                {hits.map(hit =>
+                    <MoviesGridHit key={hit.objectID}
+                                   hit={hit}
+                                   onHoverMovie={this.onHoverMovie}
+                                   onDeleteMovie={this.onDeleteMovie}
+                    />)
+                }
 
                 <Pagination />
             </div>

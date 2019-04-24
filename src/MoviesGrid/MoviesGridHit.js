@@ -7,10 +7,12 @@ class MoviesGridHit extends React.Component {
         super(props);
 
         this.state = {
-            isHovered: false
+            isHovered: false,
+            deleted: false
         };
 
         this.hover = this.hover.bind(this);
+        this.deleteMovie = this.deleteMovie.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -25,20 +27,29 @@ class MoviesGridHit extends React.Component {
         this.setState({ isHovered: hovered })
     }
 
+    deleteMovie(objectID) {
+        const { onDeleteMovie } = this.props;
+
+        this.setState({ deleted: true }, () => onDeleteMovie(objectID));
+    }
+
     render() {
-        const { hit } = this.props;
-        const { isHovered } = this.state;
+        const { hit, onDeleteMovie } = this.props;
+        const { isHovered, deleted } = this.state;
+
+        // To prevent refreshing the page/results on deletion, we just hide removed movie on a first place…
+        if (deleted) {
+            return false;
+        }
 
         return (
             <div className={`col-sm-2 movie ${isHovered ? 'hovered' : 'not-hovered'}`}
                  onMouseOver={() => this.hover(true)}
                  onMouseOut={() => this.hover(false)}>
                 <picture className="movie-picture">
-                    <img src={hit.image} />
+                    <span className="movie-delete" onClick={() => this.deleteMovie(hit.objectID)}>✕</span>
+                    <img src={hit.image}  alt={hit.title} />
                     <span className="movie-rating">★ {hit.rating}</span>
-                    <div className="movie-description">
-                        With {hit.actors.join(', ')}.
-                    </div>
                 </picture>
                 <section className="movie-content">
                     <p className="movie-title">

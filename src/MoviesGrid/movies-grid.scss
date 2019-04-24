@@ -100,7 +100,22 @@
     border-radius: 4px;
   }
 
+  &-delete {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    background: #d00000;
+    color: #fff;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: none;
+  }
+
   &-sample {
+    cursor: pointer;
+
     picture {
       width: 100%;
       height: 240px;
@@ -124,7 +139,15 @@
 
   &:hover {
     transform: scale(1.05);
-    cursor: pointer;
+
+    .movie-delete {
+      display: block;
+
+      &:hover {
+        background: #fff;
+        color: #d00000;
+      }
+    }
   }
 
   .ais-Highlight-highlighted {
