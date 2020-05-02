@@ -26,8 +26,6 @@ The `server.js` file contains the API routes and their associated handlers for a
 
 For now, the API and Front-end are deployed on a Heroku free instance, hence the warm-up time for the first request. Project is deployed as soon something new has been pushed to this repository.
 
-You can access the app at [algolia.valentin.xyz](https://algolia.valentin.xyz).
-
 ## Available Scripts
 
 In the project directory, you can run:
